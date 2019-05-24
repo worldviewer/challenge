@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Input = ({style, ...otherProps}) => (
+const Input = ({style, onChange, ...otherProps}) => (
   <input
     {...otherProps}
     style={{
@@ -12,6 +12,7 @@ const Input = ({style, ...otherProps}) => (
       fontSize: '1em',
       ...style,
     }}
+    onChange={e => onChange(e.target.value)}
   />
 )
 
