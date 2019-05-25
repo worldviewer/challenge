@@ -1,25 +1,16 @@
-import React, { Component } from 'react'
+import React from 'react';
 
-export default class WeatherForecast extends Component {
-  render() {
-    if (!this.props.forecast) {
-      return null
-    }
-    if (!this.props.forecast.list) {
-      return null
-    }
-    return (
-      <div>
-        {this.props.forecast.list.map((entry) => {
-          return (
-            <div>
-              <span>{new Date(entry.dt_txt).toLocaleString()}</span>
-              <br/>
-              <span>{Math.round(entry.main.temp - 271)}℃</span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-}
+const WeatherForecast = ({ forecast = null }) =>
+  (forecast && forecast.list && (
+    <div>
+      { forecast.list.map(({ dt_txt, main }) => (
+        <div>
+          <span>{new Date(dt_txt).toLocaleString()}</span>
+          <br />
+          <span>{main && Math.round(main.temp - 271)}℃</span>          
+        </div>
+      )) }
+    </div>
+  )) || null;
+
+export default WeatherForecast;
