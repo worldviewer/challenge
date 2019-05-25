@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const Input = ({style, onChange, ...otherProps}) => (
   <input
@@ -14,6 +14,6 @@ const Input = ({style, onChange, ...otherProps}) => (
     }}
     onChange={e => onChange(e.target.value)}
   />
-)
+);
 
-export default Input
+export default Input;

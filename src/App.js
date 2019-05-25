@@ -1,10 +1,3 @@
-/*
-  use input element
-  convert input to geocode
-  request weather forecast
-  display forecast with <WeatherForecast />
-*/
-
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import { geocode } from './api/geo.js';
@@ -25,54 +18,43 @@ class App extends Component {
             forecast: null
         };
 
-        this.fetchGeoCode = this.fetchGeoCode.bind(this);
         this.debouncedFetchGeoCode = debounce(this.fetchGeoCode, 500);
     }
 
-    async fetchGeoCode() {
-        const
-            coordinates = await geocode(this.state.location);
+    fetchGeoCode = () => {
+        geocode(this.state.location)
+            .then(({ lat, lng }) => this.setState({ lat, lng }))
+            .catch(err =>
+                this.setState({
+                    lat: null,
+                    lng: null,
+                    forecast: null
+                })                
+            );
+    };
 
-        if (coordinates) {
-            const { lat, lng } = coordinates;
+    componentDidUpdate(prevProps, prevState) {
+        const { lat, lng } = this.state;
 
-            this.setState({ lat, lng });
-
-        } else {
-            this.setState({
-                lat: null,
-                lng: null,
-                forecast: null
-            });
+        if (prevState.lat !== lat && lat !== null) {
+            getWeather(lat, lng)
+                .then(({ forecast }) => this.setState({ forecast }))
+                .catch(err => console.error(err));
         }
     }
 
-    async componentDidUpdate(prevProps, prevState) {
-        if ((prevState.lat !== this.state.lat) && (this.state.lat !== null)) {
-            const { lat, lng } = this.state,
-                forecast = await getWeather(lat, lng);
-
-            this.setState({ forecast });
-        }
-    }
-
-    render() {
-        console.log(this.state);
-
-        const { forecast } = this.state;
-
+    render = () => {
         return (
           <div className="App">
             <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <Input
-              style={{width: 200}}
-              onChange={location => this.setState({location},
-                () => this.debouncedFetchGeoCode())}
+                style={{ width: 200 }}
+                onChange={location =>
+                    this.setState({location}, () => this.debouncedFetchGeoCode())
+                }
             />
-            <WeatherForecast
-              forecast={forecast}
-            />
+            <WeatherForecast forecast={this.state.forecast} />
             </header>
           </div>
         );
